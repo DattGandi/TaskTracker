@@ -216,31 +216,17 @@ public class DatabaseAccess {
     Connection con = connectionData.getConnection();
 
 
-    String taskName = getInput(scanner, "name");
+    String taskName = getTaskInput(scanner, "name");
 
-    try {
-      Statement getTask = con.createStatement();
-      getTask.execute("SELECT " + connectionData.getNameColumn()
-              + " FROM " + connectionData.getTaskTable()
-              + " WHERE " + connectionData.getNameColumn() + " = '" + taskName + "';");
-      ResultSet result = getTask.getResultSet();
+    if(hasTask(taskName)) {
+      scanner.close();
 
-      boolean hasNext = result.next();
-      getTask.close();
-
-      if(hasNext) {
-        scanner.close();
-
-        throw new TaskAlreadyExistsException("The task '" + taskName + "' already exists.");
-      }
-    }
-    catch(SQLException e) {
-      //left empty
+      throw new TaskAlreadyExistsException("The task '" + taskName + "' already exists.");
     }
 
 
-    String taskDescription = getInput(scanner, "description");
-    String taskStatus = getInput(scanner, "status");
+    String taskDescription = getTaskInput(scanner, "description");
+    String taskStatus = getTaskInput(scanner, "status");
 
     scanner.close();
 
@@ -272,7 +258,7 @@ public class DatabaseAccess {
     return taskAdded;
   }
 
-  private String getInput(Scanner scanner, String descriptor) {
+  private String getTaskInput(Scanner scanner, String descriptor) {
     System.out.println("Input the " + descriptor + " of the task:");
 
     String input = null;
@@ -305,7 +291,59 @@ public class DatabaseAccess {
   public boolean deleteTask(InputStream stream) {
     boolean taskDeleted = false;
 
+    System.out.println("- Delete Task -");
+
+    Connection con = connectionData.getConnection();
+
+
+    Scanner scanner = new Scanner(stream);
+    String taskName = getTaskInput(scanner, "name");
+    scanner.close();
+
+    if(!hasTask(taskName)) {
+      System.out.println("The task '" + taskName + "' does not exist.");
+    }
+    else {
+      try {
+        Statement deleteTask = con.createStatement();
+        deleteTask.execute("DELETE FROM " + connectionData.getTaskTable()
+                + " WHERE " + connectionData.getNameColumn() + " = '" + taskName + "';");
+        deleteTask.close();
+
+        taskDeleted = true;
+      }
+      catch(SQLException e) {
+        //left empty
+      }
+    }
+
+
+    if(taskDeleted) {
+      System.out.println("The task was successfully deleted.");
+    }
+
 
     return taskDeleted;
+  }
+
+  private boolean hasTask(String taskName) {
+    boolean hasTask = false;
+
+    try {
+      Statement getTask = connectionData.getConnection().createStatement();
+      getTask.execute("SELECT " + connectionData.getNameColumn()
+              + " FROM " + connectionData.getTaskTable()
+              + " WHERE " + connectionData.getNameColumn() + " = '" + taskName + "';");
+      ResultSet result = getTask.getResultSet();
+
+      hasTask = result.next();
+      getTask.close();
+    }
+    catch(SQLException e) {
+      //left empty
+    }
+
+
+    return hasTask;
   }
 }
