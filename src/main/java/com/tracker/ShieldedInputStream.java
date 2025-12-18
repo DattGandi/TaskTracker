@@ -12,10 +12,6 @@ import java.io.OutputStream;
 public class ShieldedInputStream extends InputStream {
   private final InputStream STREAM;
 
-  public ShieldedInputStream() {
-    STREAM = System.in;
-  }
-
   public ShieldedInputStream(InputStream stream) {
     STREAM = stream;
   }

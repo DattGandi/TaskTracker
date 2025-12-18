@@ -1,7 +1,6 @@
 import com.tracker.DatabaseAccess;
 import com.tracker.DatabaseConnection;
 import com.tracker.TaskAlreadyExistsException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -11,11 +10,6 @@ import java.sql.Connection;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ProgramTest {
-  @BeforeEach
-  void setup() {
-
-  }
-
   @Test
   @DisplayName("Connect to database")
   void testConnectToDatabase() {
@@ -113,7 +107,7 @@ public class ProgramTest {
     byte[] bytes2 = simulatedUserInput2.getBytes();
     ByteArrayInputStream stream2 = new ByteArrayInputStream(bytes2);
 
-    assertTrue(access.deleteTask(stream2));
+    assertTrue(access.editTask(stream2));
   }
 
   @Test

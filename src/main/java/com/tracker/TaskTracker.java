@@ -13,7 +13,7 @@ public class TaskTracker {
     System.out.println("2. Create new Database");
     System.out.println("3. Exit");
 
-    Scanner scanner = new Scanner(new ShieldedInputStream());
+    Scanner scanner = new Scanner(new ShieldedInputStream(System.in));
 
     int i = 0;
     while(i == 0) {
@@ -45,10 +45,10 @@ public class TaskTracker {
 
     Connection databaseConnection;
     if(i == 1) {
-      databaseConnection = DatabaseConnection.connectToDatabase(new ShieldedInputStream());
+      databaseConnection = DatabaseConnection.connectToDatabase(System.in);
     }
     else if(i == 2) {
-      databaseConnection = DatabaseConnection.createDatabase(new ShieldedInputStream());
+      databaseConnection = DatabaseConnection.createDatabase(System.in);
     }
     else {
       System.out.println("Shutting down...");
