@@ -60,7 +60,8 @@ public class ProgramTest {
     deletePotentialCreatedTask(access, taskName);
 
     String simulatedUserInput = taskName + "\n"; //name of the task
-    simulatedUserInput += "\n"; //description of the task, default: empty
+    simulatedUserInput += "description1\n"; //description of the task
+    simulatedUserInput += "status1\n"; //status of the task
 
     byte[] bytes = simulatedUserInput.getBytes();
     ByteArrayInputStream stream = new ByteArrayInputStream(bytes);

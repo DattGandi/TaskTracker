@@ -43,7 +43,7 @@ public class DatabaseAccess {
             }
           }
           catch(TaskAlreadyExistsException e) {
-            System.out.println("Error: A task already exists with this name.");
+            System.out.println("A task already exists with this name.");
           }
         }
         case 3 -> {
@@ -58,7 +58,9 @@ public class DatabaseAccess {
         }
       }
 
-      forceUserInput();
+      if(selectedIndex != 5) {
+        forceUserInput();
+      }
     } while(selectedIndex != 5);
 
 
@@ -208,45 +210,89 @@ public class DatabaseAccess {
   public boolean addTask(InputStream stream) throws TaskAlreadyExistsException {
     boolean taskAdded = false;
 
-
     System.out.println("- Add Task -");
-    System.out.println("Input the name of the task:");
 
     Scanner scanner = new Scanner(stream);
+    Connection con = connectionData.getConnection();
 
-    String input = "";
-    while(input.isEmpty()) {
-      String currentLine = scanner.nextLine();
 
-      if(!currentLine.isEmpty() && currentLine.matches("[a-zA-Z]+")) {
-        input = currentLine;
-      }
-      else {
-        System.out.println("The name must only consist of the letters A-Z.");
-      }
-    }
-
-    scanner.close();
-
+    String taskName = getInput(scanner, "name");
 
     try {
-      Connection con = connectionData.getConnection();
-
       Statement getTask = con.createStatement();
       getTask.execute("SELECT " + connectionData.getNameColumn()
               + " FROM " + connectionData.getTaskTable()
-              + " WHERE " + connectionData.getNameColumn() + " = '" + input + "';");
+              + " WHERE " + connectionData.getNameColumn() + " = '" + taskName + "';");
       ResultSet result = getTask.getResultSet();
 
-//      Statement addTask = con.createStatement();
-//      addTask.execute("");
+      boolean hasNext = result.next();
+      getTask.close();
+
+      if(hasNext) {
+        scanner.close();
+
+        throw new TaskAlreadyExistsException("The task '" + taskName + "' already exists.");
+      }
     }
     catch(SQLException e) {
       //left empty
     }
 
 
+    String taskDescription = getInput(scanner, "description");
+    String taskStatus = getInput(scanner, "status");
+
+    scanner.close();
+
+    try {
+      Statement addTask = con.createStatement();
+      addTask.execute("INSERT INTO " + connectionData.getTaskTable() + " ("
+              + connectionData.getNameColumn() + ", "
+              + connectionData.getDescriptionColumn() + ", "
+              + connectionData.getStatusColumn()
+              + ") VALUES ("
+              + "'" + taskName + "', "
+              + "'" + taskDescription + "', "
+              + "'" + taskStatus + "');");
+      addTask.close();
+
+      taskAdded = true;
+    }
+    catch(SQLException e) {
+      //left empty
+      String s = e.getMessage();
+    }
+
+
+    if(taskAdded) {
+      System.out.println("The task '" + taskName + "' was successfully added.");
+    }
+
+
     return taskAdded;
+  }
+
+  private String getInput(Scanner scanner, String descriptor) {
+    System.out.println("Input the " + descriptor + " of the task:");
+
+    String input = null;
+
+    while(input == null) {
+      String currentLine = scanner.nextLine();
+
+      if(currentLine.isEmpty()) {
+        System.out.println("The " + descriptor + " must not be empty.");
+      }
+      else if(!currentLine.matches("[a-zA-Z0-9]+")) {
+        System.out.println("The " + descriptor + " must only consist of letters and numbers.");
+      }
+      else {
+        input = currentLine;
+      }
+    }
+
+
+    return input;
   }
 
   public boolean editTask(InputStream stream) {
