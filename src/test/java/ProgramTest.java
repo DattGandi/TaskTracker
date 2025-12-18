@@ -1,3 +1,4 @@
+import com.tracker.ConnectionData;
 import com.tracker.DatabaseAccess;
 import com.tracker.DatabaseConnection;
 import com.tracker.TaskAlreadyExistsException;
@@ -5,7 +6,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
-import java.sql.Connection;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -13,12 +13,13 @@ public class ProgramTest {
   @Test
   @DisplayName("Connect to database")
   void testConnectToDatabase() {
-    Connection con = getDatabaseConnection();
+    ConnectionData con = getDatabaseConnection();
 
     assertNotNull(con);
+    assertFalse(con.isDataMissing());
   }
 
-  private Connection getDatabaseConnection() {
+  private ConnectionData getDatabaseConnection() {
     String simulatedUserInput = "\n"; //server name, default: 'localhost'
     simulatedUserInput += "4185\n"; //port, default: '5432'
     simulatedUserInput += "postgres\n"; //username
@@ -33,10 +34,22 @@ public class ProgramTest {
   }
 
   @Test
+  @DisplayName("Show tasks")
+  void testShowTasks() {
+    ConnectionData con = getDatabaseConnection();
+    if(con.isDataMissing()) {
+      fail("Failed to establish database connection. See 'testConnectToDatabase'.");
+    }
+
+    DatabaseAccess access = new DatabaseAccess(con);
+    assertTrue(access.showTasks());
+  }
+
+  @Test
   @DisplayName("Add new task")
   void testAddNewTask() {
-    Connection con = getDatabaseConnection();
-    if(con == null) {
+    ConnectionData con = getDatabaseConnection();
+    if(con.isDataMissing()) {
       fail("Failed to establish database connection. See 'testConnectToDatabase'.");
     }
 
@@ -56,27 +69,15 @@ public class ProgramTest {
       assertTrue(access.addTask(stream));
     }
     catch(TaskAlreadyExistsException e) {
-      fail("The specified task 'task1' already existed. Task cleanup with 'deletePotentialCreatedTask' was not successful.");
+      fail("The specified task 'task1' already existed. Task cleanup with 'deletePotentialCreatedTask' was not successful. See 'testDeleteTask'.");
     }
-  }
-
-  @Test
-  @DisplayName("Show tasks")
-  void testShowTasks() {
-    Connection con = getDatabaseConnection();
-    if(con == null) {
-      fail("Failed to establish database connection. See 'testConnectToDatabase'.");
-    }
-
-    DatabaseAccess access = new DatabaseAccess(con);
-    assertTrue(access.showTasks());
   }
 
   @Test
   @DisplayName("Edit task")
   void testEditTask() {
-    Connection con = getDatabaseConnection();
-    if(con == null) {
+    ConnectionData con = getDatabaseConnection();
+    if(con.isDataMissing()) {
       fail("Failed to establish database connection. See 'testConnectToDatabase'.");
     }
 
@@ -98,7 +99,7 @@ public class ProgramTest {
       }
     }
     catch(TaskAlreadyExistsException e) {
-      fail("The specified task 'task2' already existed. Task cleanup with 'deletePotentialCreatedTask' was not successful.");
+      fail("The specified task 'task2' already existed. Task cleanup with 'deletePotentialCreatedTask' was not successful. See 'testDeleteTask'.");
     }
 
 
@@ -113,8 +114,8 @@ public class ProgramTest {
   @Test
   @DisplayName("Delete task")
   void testDeleteTask() {
-    Connection con = getDatabaseConnection();
-    if(con == null) {
+    ConnectionData con = getDatabaseConnection();
+    if(con.isDataMissing()) {
       fail("Failed to establish database connection. See 'testConnectToDatabase'.");
     }
 
@@ -136,7 +137,7 @@ public class ProgramTest {
       }
     }
     catch(TaskAlreadyExistsException e) {
-      fail("The specified task 'task3' already existed. Task cleanup with 'deletePotentialCreatedTask' was not successful.");
+      fail("The specified task 'task3' already existed. Task cleanup with 'deletePotentialCreatedTask' was not successful. See 'testDeleteTask'.");
     }
 
 

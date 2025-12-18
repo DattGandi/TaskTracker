@@ -1,37 +1,265 @@
 package com.tracker;
 
 import java.io.InputStream;
-import java.sql.Connection;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Scanner;
 
 public class DatabaseAccess {
-  private Connection connection;
+  private ConnectionData connectionData;
 
-  public DatabaseAccess(Connection connection) throws IllegalArgumentException {
-    if(connection == null) {
-      throw new IllegalArgumentException("Connection must not be null.");
+  public DatabaseAccess(ConnectionData connectionData) throws IllegalArgumentException {
+    if(connectionData == null || connectionData.isDataMissing()) {
+      throw new IllegalArgumentException("Connection data must not be null.");
     }
 
-    this.connection = connection;
+    this.connectionData = connectionData;
   }
 
   public void startUserMenu() {
-    System.out.println("DEBUG: started menu");
-    //TODO: use while loop until user ends program, make it possible for user to modify database
+    int selectedIndex;
+    do {
+      System.out.println("- Choose action -");
+      System.out.println("1. Show tasks");
+      System.out.println("2. Add task");
+      System.out.println("3. Edit task");
+      System.out.println("4. Delete task");
+      System.out.println("5. Exit");
+
+      selectedIndex = getSelectedIndex();
+
+      switch(selectedIndex) {
+        case 1 -> {
+          if(!showTasks()) {
+            System.out.println("Error: Tasks could not be displayed.");
+          }
+        }
+        case 2 -> {
+          try {
+            if(!addTask(new ShieldedInputStream(System.in))) {
+              System.out.println("Error: Task could not be added.");
+            }
+          }
+          catch(TaskAlreadyExistsException e) {
+            System.out.println("Error: A task already exists with this name.");
+          }
+        }
+        case 3 -> {
+          if(!editTask(new ShieldedInputStream(System.in))) {
+            System.out.println("Error: Task could not be edited.");
+          }
+        }
+        case 4 -> {
+          if(!deleteTask(new ShieldedInputStream(System.in))) {
+            System.out.println("Error: Task could not be deleted.");
+          }
+        }
+      }
+
+      forceUserInput();
+    } while(selectedIndex != 5);
+
+
+    System.out.println("Closing resources...");
+
+    connectionData.reset();
+
+    System.out.println("Shutting down...");
   }
 
-  public boolean addTask(InputStream stream) throws TaskAlreadyExistsException {
-    return false;
+  private int getSelectedIndex() {
+    Scanner scanner = new Scanner(new ShieldedInputStream(System.in));
+
+    int i = 0;
+    while(i == 0) {
+      switch(scanner.nextLine()) {
+        case "1" -> i = 1;
+        case "2" -> i = 2;
+        case "3" -> i = 3;
+        case "4" -> i = 4;
+        case "5" -> i = 5;
+        case "" -> {
+          //do nothing
+        }
+        default -> System.out.println("Please enter a number between 1 and 5.");
+      }
+    }
+
+    scanner.close();
+
+
+    return i;
+  }
+
+  private void forceUserInput() {
+    System.out.println("Press Enter to continue.");
+
+    Scanner scanner = new Scanner(new ShieldedInputStream(System.in));
+    scanner.nextLine();
+    scanner.close();
   }
 
   public boolean showTasks() {
-    return false;
+    boolean tasksDisplayed = false;
+
+    System.out.println("- Show Tasks -");
+
+    List<String> nameEntries = new ArrayList<String>();
+    List<String> descriptionEntries = new ArrayList<String>();
+    List<String> statusEntries = new ArrayList<String>();
+
+    try {
+      Connection con = connectionData.getConnection();
+
+      Statement showTasks = con.createStatement();
+      showTasks.execute("SELECT * FROM " + connectionData.getTaskTable() + ";");
+      ResultSet result = showTasks.getResultSet();
+
+      while(result.next()) {
+        nameEntries.add(String.valueOf(result.getArray(1)));
+        descriptionEntries.add(String.valueOf(result.getArray(2)));
+        statusEntries.add(String.valueOf(result.getArray(3)));
+      }
+
+      showTasks.close();
+    }
+    catch(SQLException e) {
+      //left empty
+    }
+
+
+    if(nameEntries.isEmpty()) {
+      System.out.println("The table does not have any entries yet.");
+
+      tasksDisplayed = true;
+    }
+    else {
+      tasksDisplayed = displayFormatedData(nameEntries, descriptionEntries, statusEntries);
+    }
+
+
+    return tasksDisplayed;
+  }
+
+  private boolean displayFormatedData(List<String> nameEntries,
+                                   List<String> descriptionEntries,
+                                   List<String> statusEntries) {
+    int nameSize;
+    int descriptionSize;
+    int statusSize;
+    try {
+      nameSize = getLongestString(nameEntries);
+      descriptionSize = getLongestString(descriptionEntries);
+      statusSize = getLongestString(statusEntries);
+    }
+    catch(NoSuchElementException e) {
+      return false;
+    }
+
+
+    String name = connectionData.getNameColumn();
+    String description = connectionData.getDescriptionColumn();
+    String status = connectionData.getStatusColumn();
+
+    nameSize = Integer.max(nameSize, name.length());
+    descriptionSize = Integer.max(descriptionSize, description.length());
+    statusSize = Integer.max(statusSize, status.length());
+
+    String delimiter = "-".repeat(nameSize + descriptionSize + statusSize + 10);
+
+
+    System.out.println(delimiter);
+
+    name = name.toUpperCase() + " ".repeat(nameSize - name.length());
+    description = description.toUpperCase() + " ".repeat(descriptionSize - description.length());
+    status = status.toUpperCase() + " ".repeat(statusSize - status.length());
+
+    System.out.println("| " + name + " | " + description + " | " + status + " |");
+
+    System.out.println(delimiter);
+
+
+    for(int x = 0; x < nameEntries.size(); x++) {
+      String currentName = nameEntries.get(x);
+      String currentDescription = descriptionEntries.get(x);
+      String currentStatus = statusEntries.get(x);
+
+      System.out.print("| ");
+      System.out.print(currentName + " ".repeat(nameSize - currentName.length()));
+      System.out.print(" | ");
+      System.out.print(currentDescription + " ".repeat(descriptionSize - currentDescription.length()));
+      System.out.print(" | ");
+      System.out.print(currentStatus + " ".repeat(statusSize - currentStatus.length()));
+      System.out.print(" |\n");
+    }
+
+    System.out.println(delimiter);
+
+
+    return true;
+  }
+
+  private int getLongestString(List<String> entries) throws NoSuchElementException {
+    return entries.stream().map(String::length).max(Integer::compareTo).orElseThrow();
+  }
+
+  public boolean addTask(InputStream stream) throws TaskAlreadyExistsException {
+    boolean taskAdded = false;
+
+
+    System.out.println("- Add Task -");
+    System.out.println("Input the name of the task:");
+
+    Scanner scanner = new Scanner(stream);
+
+    String input = "";
+    while(input.isEmpty()) {
+      String currentLine = scanner.nextLine();
+
+      if(!currentLine.isEmpty() && currentLine.matches("[a-zA-Z]+")) {
+        input = currentLine;
+      }
+      else {
+        System.out.println("The name must only consist of the letters A-Z.");
+      }
+    }
+
+    scanner.close();
+
+
+    try {
+      Connection con = connectionData.getConnection();
+
+      Statement getTask = con.createStatement();
+      getTask.execute("SELECT " + connectionData.getNameColumn()
+              + " FROM " + connectionData.getTaskTable()
+              + " WHERE " + connectionData.getNameColumn() + " = '" + input + "';");
+      ResultSet result = getTask.getResultSet();
+
+//      Statement addTask = con.createStatement();
+//      addTask.execute("");
+    }
+    catch(SQLException e) {
+      //left empty
+    }
+
+
+    return taskAdded;
   }
 
   public boolean editTask(InputStream stream) {
-    return false;
+    boolean taskEdited = false;
+
+
+    return taskEdited;
   }
 
   public boolean deleteTask(InputStream stream) {
-    return false;
+    boolean taskDeleted = false;
+
+
+    return taskDeleted;
   }
 }
