@@ -86,7 +86,7 @@ public class ProgramTest {
     DatabaseAccess access = new DatabaseAccess(con);
 
     String taskName = "task2";
-    deletePotentialCreatedTask(access, taskName);
+    deletePotentialCreatedTask(access, "NEW" + taskName);
 
     String simulatedUserInput = taskName + "\n"; //name of the task
     simulatedUserInput += "description2\n"; //description of the task
@@ -106,6 +106,10 @@ public class ProgramTest {
 
 
     String simulatedUserInput2 = taskName + "\n"; //name of the task
+    simulatedUserInput2 += "\n"; //select all options
+    simulatedUserInput2 += "NEW" + taskName + "\n"; //new name
+    simulatedUserInput2 += "NEWdescription2\n"; //new description
+    simulatedUserInput2 += "NEWstatus2\n"; //new status
 
     byte[] bytes2 = simulatedUserInput2.getBytes();
     ByteArrayInputStream stream2 = new ByteArrayInputStream(bytes2);

@@ -2,10 +2,7 @@ package com.tracker;
 
 import java.io.InputStream;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Scanner;
+import java.util.*;
 
 public class DatabaseAccess {
   private ConnectionData connectionData;
@@ -284,16 +281,159 @@ public class DatabaseAccess {
   public boolean editTask(InputStream stream) {
     boolean taskEdited = false;
 
+    System.out.println("- Edit Task -");
+
+
+    Scanner scanner = new Scanner(stream);
+    String taskName = getTaskInput(scanner, "name");
+
+    if(!hasTask(taskName)) {
+      System.out.println("The task '" + taskName + "' does not exist.");
+    }
+    else {
+      List<String> changeColumns = getChangeColumns(scanner);
+
+      String newName = null;
+      if(changeColumns.contains(connectionData.getNameColumn())) {
+        newName = getTaskInput(scanner, "new name");
+      }
+
+      String newDescription = null;
+      if(changeColumns.contains(connectionData.getDescriptionColumn())) {
+        newDescription = getTaskInput(scanner, "new description");
+      }
+
+      String newStatus = null;
+      if(changeColumns.contains(connectionData.getStatusColumn())) {
+        newStatus = getTaskInput(scanner, "new status");
+      }
+
+
+      try {
+        Connection con = connectionData.getConnection();
+
+        Statement editTask = con.createStatement();
+
+
+        boolean firstCol = true;
+        String sqlCommand = "UPDATE " + connectionData.getTaskTable() + " SET ";
+
+        if(newName != null) {
+          firstCol = false;
+
+          sqlCommand += connectionData.getNameColumn() + " = '" + newName + "'";
+        }
+
+        if(newDescription != null) {
+          if(firstCol) {
+            firstCol = false;
+          }
+          else {
+            sqlCommand += ", ";
+          }
+
+          sqlCommand += connectionData.getDescriptionColumn() + " = '" + newDescription + "'";
+        }
+
+        if(newStatus != null) {
+          if(!firstCol) {
+            sqlCommand += ", ";
+          }
+
+          sqlCommand += connectionData.getStatusColumn() + " = '" + newStatus + "'";
+        }
+
+        sqlCommand += " WHERE " + connectionData.getNameColumn() + " = '" + taskName + "';";
+
+
+        editTask.execute(sqlCommand);
+        editTask.close();
+
+        taskEdited = true;
+      }
+      catch(SQLException e) {
+        //left empty
+      }
+    }
+
+    scanner.close();
+
+
+    if(taskEdited) {
+      System.out.println("The task was successfully edited.");
+    }
+
 
     return taskEdited;
+  }
+
+  private List<String> getChangeColumns(Scanner scanner) {
+    System.out.println("Select the entries to change.");
+    System.out.println("Multiple entries can be changed at the same time.");
+    System.out.println("Separate multiple entries with ','.");
+    System.out.println("To change all entries press Enter.");
+
+    String nameColumn = connectionData.getNameColumn();
+    String descriptionColumn = connectionData.getDescriptionColumn();
+    String statusColumn = connectionData.getStatusColumn();
+    System.out.println("Available: "
+            + nameColumn + ", "
+            + descriptionColumn + ", "
+            + statusColumn);
+
+
+    String input = null;
+    while(input == null) {
+      String currentLine = scanner.nextLine();
+
+      if(currentLine.isEmpty()) {
+        input = currentLine;
+      }
+      else {
+        String[] strings = currentLine.split(",");
+
+        boolean allStringsValid = true;
+        for (String entry : strings) {
+          String s = entry.trim();
+
+          if (!s.equals(nameColumn) && !s.equals(descriptionColumn) && !s.equals(statusColumn)) {
+            System.out.println("Inputs must match with the available columns: '" + s + "'.");
+
+            allStringsValid = false;
+          }
+        }
+
+        if (allStringsValid) {
+          input = currentLine;
+        }
+      }
+    }
+
+
+    List<String> changeColumns = new ArrayList<String>();
+
+    if(input.isEmpty()) {
+      changeColumns.add(nameColumn);
+      changeColumns.add(descriptionColumn);
+      changeColumns.add(statusColumn);
+    }
+    else {
+      String[] entries = input.split(",");
+      for(int x = 0; x < entries.length; x++) {
+        entries[x] = entries[x].trim();
+      }
+
+      changeColumns.addAll(List.of(entries));
+    }
+
+
+    return changeColumns;
   }
 
   public boolean deleteTask(InputStream stream) {
     boolean taskDeleted = false;
 
     System.out.println("- Delete Task -");
-
-    Connection con = connectionData.getConnection();
 
 
     Scanner scanner = new Scanner(stream);
@@ -305,6 +445,8 @@ public class DatabaseAccess {
     }
     else {
       try {
+        Connection con = connectionData.getConnection();
+
         Statement deleteTask = con.createStatement();
         deleteTask.execute("DELETE FROM " + connectionData.getTaskTable()
                 + " WHERE " + connectionData.getNameColumn() + " = '" + taskName + "';");
