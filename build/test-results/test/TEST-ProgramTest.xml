@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ProgramTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2025-12-18T22:43:31.788Z" hostname="ADLER" time="1.006">
+  <properties/>
+  <testcase name="Edit task" classname="ProgramTest" time="0.474"/>
+  <testcase name="Connect to database" classname="ProgramTest" time="0.084"/>
+  <testcase name="Add new task" classname="ProgramTest" time="0.186"/>
+  <testcase name="Show tasks" classname="ProgramTest" time="0.098"/>
+  <testcase name="Delete task" classname="ProgramTest" time="0.159"/>
+  <system-out><![CDATA[- Connect to Database -
+Input host server:
+Press enter to use localhost.
+Input port:
+Press enter to use the default port (5432).
+Input username:
+Input password:
+Input the database name:
+Connecting to database test...
+Successful
+- Delete Task -
+Input the name of the task:
+The task was successfully deleted.
+- Add Task -
+Input the name of the task:
+Input the description of the task:
+Input the status of the task:
+The task 'task2' was successfully added.
+- Edit Task -
+Input the name of the task:
+Select the entries to change.
+Multiple entries can be changed at the same time.
+Separate multiple entries with ','.
+To change all entries press Enter.
+Available: name, description, status
+Input the new name of the task:
+Input the new description of the task:
+Input the new status of the task:
+The task was successfully edited.
+- Connect to Database -
+Input host server:
+Press enter to use localhost.
+Input port:
+Press enter to use the default port (5432).
+Input username:
+Input password:
+Input the database name:
+Connecting to database test...
+Successful
+- Connect to Database -
+Input host server:
+Press enter to use localhost.
+Input port:
+Press enter to use the default port (5432).
+Input username:
+Input password:
+Input the database name:
+Connecting to database test...
+Successful
+- Delete Task -
+Input the name of the task:
+The task was successfully deleted.
+- Add Task -
+Input the name of the task:
+Input the description of the task:
+Input the status of the task:
+The task 'task1' was successfully added.
+- Connect to Database -
+Input host server:
+Press enter to use localhost.
+Input port:
+Press enter to use the default port (5432).
+Input username:
+Input password:
+Input the database name:
+Connecting to database test...
+Successful
+- Show Tasks -
+-------------------------------------------
+| NAME     | DESCRIPTION     | STATUS     |
+-------------------------------------------
+| test11   | desc1           | status123  |
+| NEWtask2 | NEWdescription2 | NEWstatus2 |
+| task1    | description1    | status1    |
+-------------------------------------------
+- Connect to Database -
+Input host server:
+Press enter to use localhost.
+Input port:
+Press enter to use the default port (5432).
+Input username:
+Input password:
+Input the database name:
+Connecting to database test...
+Successful
+- Delete Task -
+Input the name of the task:
+The task 'task3' does not exist.
+- Add Task -
+Input the name of the task:
+Input the description of the task:
+Input the status of the task:
+The task 'task3' was successfully added.
+- Delete Task -
+Input the name of the task:
+The task was successfully deleted.
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

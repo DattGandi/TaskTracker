@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="x-ua-compatible" content="IE=edge"/>
+<title>Test results - Class ProgramTest</title>
+<link href="../css/base-style.css" rel="stylesheet" type="text/css"/>
+<link href="../css/style.css" rel="stylesheet" type="text/css"/>
+<script src="../js/report.js" type="text/javascript"></script>
+</head>
+<body>
+<div id="content">
+<h1>Class ProgramTest</h1>
+<div class="breadcrumbs">
+<a href="../index.html">all</a> &gt; 
+<a href="../packages/default-package.html">default-package</a> &gt; ProgramTest</div>
+<div id="summary">
+<table>
+<tr>
+<td>
+<div class="summaryGroup">
+<table>
+<tr>
+<td>
+<div class="infoBox" id="tests">
+<div class="counter">5</div>
+<p>tests</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="failures">
+<div class="counter">0</div>
+<p>failures</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="ignored">
+<div class="counter">0</div>
+<p>ignored</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="duration">
+<div class="counter">1.001s</div>
+<p>duration</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</td>
+<td>
+<div class="infoBox success" id="successRate">
+<div class="percent">100%</div>
+<p>successful</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="tab-container">
+<ul class="tabLinks">
+<li>
+<a href="#">Tests</a>
+</li>
+<li>
+<a href="#">Standard output</a>
+</li>
+</ul>
+<div class="tab">
+<h2>Tests</h2>
+<table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Method name</th>
+<th>Duration</th>
+<th>Result</th>
+</tr>
+</thead>
+<tr>
+<td class="success">Add new task</td>
+<td class="success">testAddNewTask()</td>
+<td class="success">0.186s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">Connect to database</td>
+<td class="success">testConnectToDatabase()</td>
+<td class="success">0.084s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">Delete task</td>
+<td class="success">testDeleteTask()</td>
+<td class="success">0.159s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">Edit task</td>
+<td class="success">testEditTask()</td>
+<td class="success">0.474s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">Show tasks</td>
+<td class="success">testShowTasks()</td>
+<td class="success">0.098s</td>
+<td class="success">passed</td>
+</tr>
+</table>
+</div>
+<div class="tab">
+<h2>Standard output</h2>
+<span class="code">
+<pre id="class-stdout">- Connect to Database -
+Input host server:
+Press enter to use localhost.
+Input port:
+Press enter to use the default port (5432).
+Input username:
+Input password:
+Input the database name:
+Connecting to database test...
+Successful
+- Delete Task -
+Input the name of the task:
+The task was successfully deleted.
+- Add Task -
+Input the name of the task:
+Input the description of the task:
+Input the status of the task:
+The task 'task2' was successfully added.
+- Edit Task -
+Input the name of the task:
+Select the entries to change.
+Multiple entries can be changed at the same time.
+Separate multiple entries with ','.
+To change all entries press Enter.
+Available: name, description, status
+Input the new name of the task:
+Input the new description of the task:
+Input the new status of the task:
+The task was successfully edited.
+- Connect to Database -
+Input host server:
+Press enter to use localhost.
+Input port:
+Press enter to use the default port (5432).
+Input username:
+Input password:
+Input the database name:
+Connecting to database test...
+Successful
+- Connect to Database -
+Input host server:
+Press enter to use localhost.
+Input port:
+Press enter to use the default port (5432).
+Input username:
+Input password:
+Input the database name:
+Connecting to database test...
+Successful
+- Delete Task -
+Input the name of the task:
+The task was successfully deleted.
+- Add Task -
+Input the name of the task:
+Input the description of the task:
+Input the status of the task:
+The task 'task1' was successfully added.
+- Connect to Database -
+Input host server:
+Press enter to use localhost.
+Input port:
+Press enter to use the default port (5432).
+Input username:
+Input password:
+Input the database name:
+Connecting to database test...
+Successful
+- Show Tasks -
+-------------------------------------------
+| NAME     | DESCRIPTION     | STATUS     |
+-------------------------------------------
+| test11   | desc1           | status123  |
+| NEWtask2 | NEWdescription2 | NEWstatus2 |
+| task1    | description1    | status1    |
+-------------------------------------------
+- Connect to Database -
+Input host server:
+Press enter to use localhost.
+Input port:
+Press enter to use the default port (5432).
+Input username:
+Input password:
+Input the database name:
+Connecting to database test...
+Successful
+- Delete Task -
+Input the name of the task:
+The task 'task3' does not exist.
+- Add Task -
+Input the name of the task:
+Input the description of the task:
+Input the status of the task:
+The task 'task3' was successfully added.
+- Delete Task -
+Input the name of the task:
+The task was successfully deleted.
+</pre>
+<button class="clipboard-copy-btn" aria-label="Copy to clipboard" data-copy-element-id="class-stdout">Copy</button>
+</span>
+</div>
+</div>
+<div id="footer">
+<p>
+<div>
+<label class="hidden" id="label-for-line-wrapping-toggle" for="line-wrapping-toggle">Wrap lines
+<input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
+</label>
+</div>Generated by 
+<a href="https://www.gradle.org">Gradle 9.1.0</a> at 18.12.2025, 23:43:32</p>
+</div>
+</div>
+</body>
+</html>

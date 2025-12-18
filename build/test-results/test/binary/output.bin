@@ -1,0 +1,96 @@
+- Connect to Database -
+Input host server:
+Press enter to use localhost.
+Input port:
+-Press enter to use the default port (5432).
+Input username:
+Input password:
+Input the database name:
+ Connecting to database test...
+Successful
+- Delete Task -
+Input the name of the task:
+$The task was successfully deleted.
+- Add Task -
+Input the name of the task:
+$Input the description of the task:
+Input the status of the task:
+*The task 'task2' was successfully added.
+- Edit Task -
+Input the name of the task:
+Select the entries to change.
+3Multiple entries can be changed at the same time.
+%Separate multiple entries with ','.
+$To change all entries press Enter.
+&Available: name, description, status
+!Input the new name of the task:
+(Input the new description of the task:
+#Input the new status of the task:
+#The task was successfully edited.
+- Connect to Database -
+Input host server:
+Press enter to use localhost.
+Input port:
+-Press enter to use the default port (5432).
+Input username:
+Input password:
+Input the database name:
+ Connecting to database test...
+Successful
+- Connect to Database -
+Input host server:
+Press enter to use localhost.
+Input port:
+-Press enter to use the default port (5432).
+Input username:
+Input password:
+Input the database name:
+ Connecting to database test...
+Successful
+- Delete Task -
+Input the name of the task:
+$The task was successfully deleted.
+- Add Task -
+Input the name of the task:
+$Input the description of the task:
+Input the status of the task:
+*The task 'task1' was successfully added.
+- Connect to Database -
+Input host server:
+Press enter to use localhost.
+Input port:
+-Press enter to use the default port (5432).
+Input username:
+Input password:
+Input the database name:
+ Connecting to database test...
+Successful
+- Show Tasks -
+--------------------------------------------
+-| NAME     | DESCRIPTION     | STATUS     |
+--------------------------------------------
+,| test11   | desc1           | status123  |
+,| NEWtask2 | NEWdescription2 | NEWstatus2 |
+,| task1    | description1    | status1    |
+--------------------------------------------
+- Connect to Database -
+Input host server:
+Press enter to use localhost.
+Input port:
+-Press enter to use the default port (5432).
+Input username:
+Input password:
+Input the database name:
+ Connecting to database test...
+Successful
+- Delete Task -
+Input the name of the task:
+"The task 'task3' does not exist.
+- Add Task -
+Input the name of the task:
+$Input the description of the task:
+Input the status of the task:
+*The task 'task3' was successfully added.
+- Delete Task -
+Input the name of the task:
+$The task was successfully deleted.
